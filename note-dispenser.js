@@ -15,7 +15,7 @@ NoteDispenser.prototype.calculate = function (amount) {
 };
 
 NoteDispenser.prototype._calc = function (availableDenominations, amount) {
-	if (!availableDenominations.length) {
+	if (!availableDenominations.length || !amount) {
 		return (amount ? null : {}); // no amount left - success
 	}
 	var currentDenom = availableDenominations[0];
