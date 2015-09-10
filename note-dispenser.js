@@ -1,29 +1,37 @@
 
-var NoteDispenser = function (_20_dollar_notes, _50_dollar_notes) {
-	this._20_dollar_notes = _20_dollar_notes;
-	this._50_dollar_notes = _50_dollar_notes;
+var NoteDispenser = function (availableDenominations) {
+	this._availableDenominations = availableDenominations;
 };
 
 NoteDispenser.prototype.calculate = function (amount) {
-	var amountLeft = amount;
-	var result = {};
 
-	var fiftiesCount = Math.min(Math.floor(amountLeft / 50), this._50_dollar_notes);
-	do {
-		result['50_dollar_notes'] = fiftiesCount;
-		fiftiesCount--;
-		var amountLeftOverDivideableBy20 = ((amountLeft - (result['50_dollar_notes'] * 50)) % 20 !== 0);
-	} while ((result['50_dollar_notes'] > 0) && amountLeftOverDivideableBy20);
-	amountLeft -= (result['50_dollar_notes'] * 50);
+	var result = this._calc(this._availableDenominations, amount);
 
-	result['20_dollar_notes'] = Math.min(Math.floor(amountLeft / 20), this._20_dollar_notes);
-	amountLeft -= (result['20_dollar_notes'] * 20);
-
-	if (amountLeft) {
+	if (!result) {
 		throw new Error('Amount can not be dispensed.');
 	}
 
 	return result;
+};
+
+NoteDispenser.prototype._calc = function (availableDenominations, amount) {
+	if (!availableDenominations.length) {
+		return (amount ? null : {}); // no amount left - success
+	}
+	var currentDenom = availableDenominations[0];
+
+	var noteCount = Math.min(Math.floor(amount / currentDenom.value), currentDenom.count);
+	while (noteCount > 0) {
+		var result = this._calc(availableDenominations.slice(1), amount - (noteCount * currentDenom.value));
+		if (result) {
+			result[currentDenom.value + '_dollar_notes'] = noteCount;
+			return result;
+		}
+
+		noteCount--;
+	};
+
+	return this._calc(availableDenominations.slice(1), amount);
 };
 
 module.exports = NoteDispenser;
