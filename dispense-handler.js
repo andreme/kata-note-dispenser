@@ -15,7 +15,12 @@ function dispenseHandler(query) {
 		throw new Error('Note count invalid.');
 	}
 
-	var nd = new NoteDispenser(note_20_count, note_50_count);
+	var availableDenominations = [
+		{value: 50, count: note_50_count},
+		{value: 20, count: note_20_count}
+	];
+
+	var nd = new NoteDispenser(availableDenominations);
 	return nd.calculate(amount);
 }
 
