@@ -13,9 +13,13 @@ app.get('/dispense', function (req, res) {
 	}
 });
 
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
+app.get('*', function (req, res) {
+	res.send(404);
+});
 
-  console.log('Note dispenser listening at http://%s:%s/dispense', host, port);
+var server = app.listen(3000, function () {
+	var host = server.address().address;
+	var port = server.address().port;
+
+	console.log('Note dispenser listening at http://%s:%s/dispense', host, port);
 });
